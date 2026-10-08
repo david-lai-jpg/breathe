@@ -17,7 +17,7 @@ let lastStyle: Style | undefined
 // the breath the band last posted, for the spinner
 let phase: { word: string; exercise: string } | undefined
 
-const log = ($: { ui: { log: (text: string) => void } }, what: string) => (err: unknown) => $.ui.log(`mindful-claude: ${what}: ${err}`)
+const log = ($: { ui: { log: (text: string) => void } }, what: string) => (err: unknown) => $.ui.log(`breathe: ${what}: ${err}`)
 
 export const register: Register = on => {
   on('session.start', async ($, e, next) => {
@@ -26,7 +26,7 @@ export const register: Register = on => {
     config = readConfig(saved)
     await $.command.register({
       name: 'breathe',
-      description: 'Breathing exercises above the prompt while Claude works: on, off, hrv, sigh, box, 478, style, delay (mindful-claude)',
+      description: 'Breathing exercises above the prompt while Claude works: on, off, hrv, sigh, box, 478, style, delay (breathe)',
       argumentHint: '[on | off | hrv | sigh | box | 478 | style <name> | delay <s> | help]',
       immediate: true,
     }).catch(log($, '/breathe not registered'))

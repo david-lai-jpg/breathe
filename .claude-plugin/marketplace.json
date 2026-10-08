@@ -1,10 +1,10 @@
 {
-  "name": "mindful-claude",
+  "name": "breathe",
   "owner": { "name": "Anthony" },
-  "metadata": { "description": "mindful-claude: breathe while Claude works" },
+  "metadata": { "description": "breathe: guided breathing while Claude works (fork of halluton/Mindful-Claude)" },
   "plugins": [
     {
-      "name": "mindful-claude",
+      "name": "breathe",
       "source": "./",
       "description": "Guided breathing exercises above the Claude Code prompt while Claude works; the spinner reads the breath",
       "homepage": "https://github.com/halluton/Mindful-Claude",
