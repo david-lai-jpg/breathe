@@ -13,7 +13,7 @@ import { centre, frame, isStyle, type Style } from './breath/shapes.ts'
 type Props = { exercise?: string; style?: string; elapsedMs?: number } | undefined
 type State = { tick: number; offsetMs: number; line: string }
 
-const COLOR = '#f7835d' // Claude orange
+// No colour set: the band draws in the terminal's own text colour.
 const TICK_MS = 100
 
 export default function Breathe(props: Props, surface: ClientSurface<State>) {
@@ -46,9 +46,9 @@ export default function Breathe(props: Props, surface: ClientSurface<State>) {
 
   return (
     <Box flexDirection="column" width={width}>
-      {art.map(line => <Text color={COLOR}>{line}</Text>)}
-      {rows >= 1 ? <Text color={COLOR}>{centre(phaseLine(phase), width)}</Text> : null}
-      {rows >= 2 ? <Text color={COLOR} dimColor>{centre(exercise.name, width)}</Text> : null}
+      {art.map(line => <Text>{line}</Text>)}
+      {rows >= 1 ? <Text>{centre(phaseLine(phase), width)}</Text> : null}
+      {rows >= 2 ? <Text dimColor>{centre(exercise.name, width)}</Text> : null}
     </Box>
   )
 }
