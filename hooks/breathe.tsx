@@ -1,7 +1,7 @@
 /* @jsx h */
 import type { ClientSurface } from 'claude-code'
 import { exerciseOf, phaseAt, phaseLine, spinnerWord } from './breath/exercises.ts'
-import { frame, isStyle, type Style } from './breath/shapes.ts'
+import { centre, frame, isStyle, type Style } from './breath/shapes.ts'
 
 // The breathing band: a surface module the hooks module mounts above the prompt while Claude
 // works. It runs on the drawing thread with its own frame clock, ten frames a second like
@@ -39,13 +39,15 @@ export default function Breathe(props: Props, surface: ClientSurface<State>) {
   const elapsed = (s?.offsetMs ?? 0) + (s?.tick ?? 0) * TICK_MS
   const phase = phaseAt(exercise, elapsed)
   const width = surface.columns || 80
-  const rows = surface.rows || 9
-  // the picture only: the spinner line carries the phase
-  const art = frame(style, phase.progress, width, rows)
+  const rows = surface.rows || 8
+  // the picture and the exercise name under it; the spinner line carries the phase
+  const artRows = Math.max(0, rows - 1)
+  const art = frame(style, phase.progress, width, artRows)
 
   return (
     <Box flexDirection="column" width={width}>
       {art.map(line => <Text>{line}</Text>)}
+      {rows >= 1 ? <Text dimColor>{centre(exercise.name, width)}</Text> : null}
     </Box>
   )
 }
