@@ -26,8 +26,8 @@ export const register: Register = on => {
     config = readConfig(saved)
     await $.command.register({
       name: 'breathe',
-      description: 'Breathing exercises above the prompt while Claude works: on, off, hrv, sigh, box, 478, style, delay (breathe)',
-      argumentHint: '[on | off | hrv | sigh | box | 478 | style <name> | delay <s> | help]',
+      description: 'Breathing exercises above the prompt while Claude works: on, off, hrv, sigh, box, 478, 46, style, delay (breathe)',
+      argumentHint: '[on | off | hrv | sigh | box | 478 | 46 | style <name> | delay <s> | help]',
       immediate: true,
     }).catch(log($, '/breathe not registered'))
     return r

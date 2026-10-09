@@ -43,6 +43,7 @@ To remove it: `claude plugin uninstall mindful-claude`.
 | `/breathe sigh` | Physiological Sigh: double inhale, long exhale |
 | `/breathe box` | Box Breathing: 4s in, 4s hold, 4s out, 4s hold |
 | `/breathe 478` | 4-7-8 Breathing: 4s in, 7s hold, 8s out |
+| `/breathe 46` | Extended Exhale: 4s in, 6s out |
 | `/breathe style wave` | Pin a style: `pulse`, `ripples`, `dots`, `wave`, or `random` |
 | `/breathe delay 5` | Seconds into a turn before the band appears (default 0) |
 | `/breathe spinner off` | Leave the spinner alone |
@@ -55,6 +56,7 @@ Settings persist across sessions.
 | **Physiological Sigh** | Quick calm-down |
 | **Box Breathing** | Focus and concentration |
 | **4-7-8 Breathing** | Deep relaxation |
+| **Extended Exhale** | Calm without breath holds |
 
 ## How it works
 

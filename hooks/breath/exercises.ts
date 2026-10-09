@@ -1,7 +1,7 @@
-// The four breathing exercises and the maths of one breath, ported from legacy/breathe.sh.
+// The five breathing exercises and the maths of one breath, ported from legacy/breathe.sh.
 // Pure functions: no engine, no surface, so `bun test` covers them.
 
-export type ExerciseKey = 'hrv' | 'sigh' | 'box' | '478'
+export type ExerciseKey = 'hrv' | 'sigh' | 'box' | '478' | '46'
 
 export type Exercise = {
   key: ExerciseKey
@@ -21,6 +21,7 @@ export const EXERCISES: readonly Exercise[] = [
   { key: 'sigh', name: 'Physiological Sigh', pattern: 'double inhale, long exhale', inhaleMs: 4000, hold1Ms: 1000, exhaleMs: 10000, hold2Ms: 0, sip: true },
   { key: 'box', name: 'Box Breathing', pattern: '4s in, 4s hold, 4s out, 4s hold', inhaleMs: 4000, hold1Ms: 4000, exhaleMs: 4000, hold2Ms: 4000 },
   { key: '478', name: '4-7-8 Breathing', pattern: '4s in, 7s hold, 8s out', inhaleMs: 4000, hold1Ms: 7000, exhaleMs: 8000, hold2Ms: 0 },
+  { key: '46', name: 'Extended Exhale', pattern: '4s in, 6s out', inhaleMs: 4000, hold1Ms: 0, exhaleMs: 6000, hold2Ms: 0 },
 ]
 
 const ALIASES: Record<string, ExerciseKey> = {
@@ -28,12 +29,13 @@ const ALIASES: Record<string, ExerciseKey> = {
   sigh: 'sigh', physiological: 'sigh',
   box: 'box',
   '478': '478', relax: '478',
+  '46': '46', exhale: '46', extended: '46',
 }
 
 export const isExerciseKey = (value: unknown): value is ExerciseKey =>
   typeof value === 'string' && EXERCISES.some(e => e.key === value)
 
-/** The exercise a word names (`hrv`, `coherent`, `sigh`, `box`, `478`, `relax`), or undefined. */
+/** The exercise a word names (`hrv`, `coherent`, `sigh`, `box`, `478`, `relax`, `46`, `exhale`), or undefined. */
 export const resolveExercise = (word: string): ExerciseKey | undefined => ALIASES[word.trim().toLowerCase()]
 
 export const exerciseOf = (key: unknown): Exercise => EXERCISES.find(e => e.key === key) ?? EXERCISES[0]!

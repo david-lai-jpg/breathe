@@ -2,18 +2,20 @@ import { describe, expect, test } from 'bun:test'
 import { EXERCISES, cycleMs, ease, exerciseOf, phaseAt, phaseLine, resolveExercise, secondsLeft } from '../hooks/breath/exercises.ts'
 
 describe('exercises', () => {
-  test('four exercises, keyed as /breathe names them', () => {
-    expect(EXERCISES.map(e => e.key)).toEqual(['hrv', 'sigh', 'box', '478'])
+  test('five exercises, keyed as /breathe names them', () => {
+    expect(EXERCISES.map(e => e.key)).toEqual(['hrv', 'sigh', 'box', '478', '46'])
     expect(cycleMs(exerciseOf('hrv'))).toBe(11000)
     expect(cycleMs(exerciseOf('box'))).toBe(16000)
     expect(cycleMs(exerciseOf('478'))).toBe(19000)
     expect(cycleMs(exerciseOf('sigh'))).toBe(15000)
+    expect(cycleMs(exerciseOf('46'))).toBe(10000)
   })
 
   test('aliases resolve, unknown words do not, unknown keys fall back to coherent', () => {
     expect(resolveExercise('HRV')).toBe('hrv')
     expect(resolveExercise('coherent')).toBe('hrv')
     expect(resolveExercise('relax')).toBe('478')
+    expect(resolveExercise('exhale')).toBe('46')
     expect(resolveExercise('tetris')).toBeUndefined()
     expect(exerciseOf('nope').key).toBe('hrv')
   })

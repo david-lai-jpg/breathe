@@ -24,6 +24,7 @@ describe('config', () => {
   test('an exercise by name or alias', () => {
     expect(applyCommand(DEFAULTS, 'box').config.exercise).toBe('box')
     expect(applyCommand(DEFAULTS, 'relax').config.exercise).toBe('478')
+    expect(applyCommand(DEFAULTS, '46').text).toContain('Extended Exhale')
     expect(applyCommand(DEFAULTS, 'sigh').text).toContain('Physiological Sigh')
   })
 
