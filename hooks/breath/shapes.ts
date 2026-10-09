@@ -152,8 +152,8 @@ function tide(grid: Grid, progress: number, width: number, elapsedMs: number): v
     const col = left + c
     if (col < 0 || col >= width) continue
     const ripple = (Math.sin(c * 0.3 + elapsedMs / 900) + 0.4 * Math.sin(c * 0.11 - elapsedMs / 1700)) / 1.4
-    // in eighths of a row: a shallow layer at rest, all 7 rows (56) at the top of the breath
-    const level = 5 + k * 51 + swell * ripple
+    // in eighths of a row: a shallow layer at rest, 6 of the 7 rows (48) at the top of the breath
+    const level = 5 + k * 43 + swell * ripple
     grid.forEach((line, row) => {
       const eighths = Math.round(Math.max(0, Math.min(8, level - (ART_ROWS - 1 - row) * 8)))
       if (eighths > 0) line[col] = HBLK[eighths]!

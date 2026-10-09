@@ -83,11 +83,12 @@ describe('shapes', () => {
     expect(bar(500).endsWith(' ▏')).toBe(true)
   })
 
-  test('tide: rises with the breath and is a full, flat container at the top', () => {
+  test('tide: rises with the breath and is a flat container one row below the top', () => {
     const filled = (f: string[]) => f.join('').split('').filter(ch => ch !== ' ').length
     expect(filled(frame('tide', 600, 80, ART_ROWS, 0))).toBeGreaterThan(filled(frame('tide', 200, 80, ART_ROWS, 0)))
     const full = frame('tide', 1000, 80, ART_ROWS, 12345)
-    expect(full.every(line => line.trim() === '█'.repeat(60))).toBe(true)
+    expect(full[0]!.trim()).toBe('')
+    expect(full.slice(1).every(line => line.trim() === '█'.repeat(60))).toBe(true)
   })
 
   test('tide: the surface moves with time below the top', () => {
