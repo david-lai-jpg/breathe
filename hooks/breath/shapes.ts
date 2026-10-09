@@ -146,14 +146,15 @@ function meter(grid: Grid, progress: number, width: number): void {
 function tide(grid: Grid, progress: number, width: number, elapsedMs: number): void {
   const span = boxWidth(width)
   const left = Math.floor((width - span) / 2)
-  const k = progress / 1000
-  const swell = 2.4 * Math.sqrt(1 - k)
+  // in eighths of a row: empty at the bottom of the breath, 6 of the 7 rows (48) at the top
+  const base = (progress / 1000) * 48
+  // waves never dip below the floor, so the band is empty at rest; they calm to a flat brim at the top
+  const swell = Math.min(base, 2.4 * Math.sqrt(1 - progress / 1000))
   for (let c = 0; c < span; c++) {
     const col = left + c
     if (col < 0 || col >= width) continue
     const ripple = (Math.sin(c * 0.3 + elapsedMs / 900) + 0.4 * Math.sin(c * 0.11 - elapsedMs / 1700)) / 1.4
-    // in eighths of a row: a shallow layer at rest, 6 of the 7 rows (48) at the top of the breath
-    const level = 5 + k * 43 + swell * ripple
+    const level = base + swell * ripple
     grid.forEach((line, row) => {
       const eighths = Math.round(Math.max(0, Math.min(8, level - (ART_ROWS - 1 - row) * 8)))
       if (eighths > 0) line[col] = HBLK[eighths]!

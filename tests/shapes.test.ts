@@ -16,7 +16,7 @@ describe('shapes', () => {
     expect(scaledHalf(1000, 80)).toBe(30)
   })
 
-  test.each(['pulse', 'ripples', 'dots', 'wave'] as const)('%s: empty at the bottom of the breath', style => {
+  test.each(['pulse', 'ripples', 'dots', 'wave', 'tide'] as const)('%s: empty at the bottom of the breath', style => {
     const empty = frame(style, 0, 80)
     expect(empty).toHaveLength(ART_ROWS)
     expect(empty.every(line => line.trim() === '')).toBe(true)
