@@ -15,7 +15,7 @@ type State = { tick: number; offsetMs: number; line: string }
 
 // No colour set: the band draws in the terminal's own text colour.
 const TICK_MS = 100
-const CUE = '˚ · breathe in to the back of your head · ˚'
+const CUE = '˚ · breathe low · belly soft · shoulders heavy · ˚'
 
 export default function Breathe(props: Props, surface: ClientSurface<State>) {
   const { Box, Text } = surface.elements
