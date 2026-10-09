@@ -1,6 +1,6 @@
 /* @jsx h */
 import type { ClientSurface } from 'claude-code'
-import { exerciseOf, phaseAt, phaseLine, spinnerWord } from './breath/exercises.ts'
+import { exerciseOf, phaseAt, phaseLine, spinnerWord, type PhaseLabel } from './breath/exercises.ts'
 import { centre, frame, isStyle, type Style } from './breath/shapes.ts'
 
 // The breathing band: a surface module the hooks module mounts above the prompt while Claude
@@ -15,7 +15,13 @@ type State = { tick: number; offsetMs: number; line: string }
 
 // No colour set: the band draws in the terminal's own text colour.
 const TICK_MS = 100
-const CUE = '˚ · breathe low · belly soft · shoulders heavy · ˚'
+// what the body does in each phase: a low, soft in-breath and an out-breath that lets go
+const CUES: Record<PhaseLabel, string> = {
+  'Breathe in': 'breathe low · belly soft',
+  'Sip in': 'breathe low · belly soft',
+  Hold: 'pause · stay soft',
+  'Breathe out': 'soft sigh out · unclench',
+}
 
 export default function Breathe(props: Props, surface: ClientSurface<State>) {
   const { Box, Text } = surface.elements
@@ -49,7 +55,7 @@ export default function Breathe(props: Props, surface: ClientSurface<State>) {
     <Box flexDirection="column" width={width}>
       {art.map(line => <Text>{line}</Text>)}
       {rows >= 1 ? <Text dimColor>{centre(exercise.name, width)}</Text> : null}
-      {rows >= 2 ? <Text italic>{centre(CUE, width)}</Text> : null}
+      {rows >= 2 ? <Text italic>{centre(`˚ · ${CUES[phase.label]} · ˚`, width)}</Text> : null}
     </Box>
   )
 }
