@@ -15,6 +15,7 @@ type State = { tick: number; offsetMs: number; line: string }
 
 // No colour set: the band draws in the terminal's own text colour.
 const TICK_MS = 100
+const CUE = '˚ · breathe in to the back of your head · ˚'
 
 export default function Breathe(props: Props, surface: ClientSurface<State>) {
   const { Box, Text } = surface.elements
@@ -40,14 +41,15 @@ export default function Breathe(props: Props, surface: ClientSurface<State>) {
   const phase = phaseAt(exercise, elapsed)
   const width = surface.columns || 80
   const rows = surface.rows || 8
-  // the picture and the exercise name under it; the spinner line carries the phase
-  const artRows = Math.max(0, rows - 1)
+  // the picture, the exercise name and the cue under it; the spinner line carries the phase
+  const artRows = Math.max(0, rows - 2)
   const art = frame(style, phase.progress, width, artRows)
 
   return (
     <Box flexDirection="column" width={width}>
       {art.map(line => <Text>{line}</Text>)}
       {rows >= 1 ? <Text dimColor>{centre(exercise.name, width)}</Text> : null}
+      {rows >= 2 ? <Text italic>{centre(CUE, width)}</Text> : null}
     </Box>
   )
 }

@@ -8,7 +8,7 @@ import { pickStyle, type Style } from './breath/shapes.ts'
 // stops) and reads the breath's phase into the spinner line. /breathe changes the settings,
 // kept in $.store.
 
-const BAND_ROWS = 8 // seven rows of picture, the exercise name; the spinner line carries the phase
+const BAND_ROWS = 9 // seven rows of picture, the exercise name, the cue; the spinner line carries the phase
 
 let config: Config = DEFAULTS
 // the running turn: when it started and which style it drew
