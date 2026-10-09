@@ -19,7 +19,7 @@ const TICK_MS = 100
 const CUES: Record<PhaseLabel, string> = {
   'Breathe in': 'breathe low · belly soft',
   'Sip in': 'breathe low · belly soft',
-  Hold: 'pause · stay soft',
+  Hold: 'throat open · just pause',
   'Breathe out': 'soft sigh out · unclench',
 }
 
