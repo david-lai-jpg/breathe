@@ -17,8 +17,8 @@ type State = { tick: number; offsetMs: number; line: string }
 const TICK_MS = 100
 // what the body does in each phase: a low, soft in-breath and an out-breath that lets go
 const CUES: Record<PhaseLabel, string> = {
-  'Breathe in': 'breathe low · belly soft',
-  'Sip in': 'breathe low · belly soft',
+  'Breathe in': 'breathe low · belly soft · shoulders heavy',
+  'Sip in': 'breathe low · belly soft · shoulders heavy',
   Hold: 'throat open · just pause',
   'Breathe out': 'soft sigh out · unclench',
 }
@@ -49,7 +49,7 @@ export default function Breathe(props: Props, surface: ClientSurface<State>) {
   const rows = surface.rows || 8
   // the picture, the exercise name and the cue under it; the spinner line carries the phase
   const artRows = Math.max(0, rows - 2)
-  const art = frame(style, phase.progress, width, artRows)
+  const art = frame(style, phase.progress, width, artRows, elapsed)
 
   return (
     <Box flexDirection="column" width={width}>

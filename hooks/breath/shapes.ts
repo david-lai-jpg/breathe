@@ -1,9 +1,10 @@
-// The four animation styles, ported from legacy/breathe.sh: each turns a breath's progress
-// (0..1000) into rows of text, the shape centred in `width` cells. Pure: `bun test` covers it.
+// The animation styles: pulse, ripples, dots and wave ported from legacy/breathe.sh, the rest picked
+// from a prototype gallery. Each turns a breath's progress (0..1000) into rows of text, the shape
+// centred in `width` cells. Pure: `bun test` covers it.
 
-export type Style = 'pulse' | 'ripples' | 'dots' | 'wave'
+export type Style = 'pulse' | 'ripples' | 'dots' | 'wave' | 'horizon' | 'meter' | 'tide' | 'halftone'
 
-export const STYLES: readonly Style[] = ['pulse', 'ripples', 'dots', 'wave']
+export const STYLES: readonly Style[] = ['pulse', 'ripples', 'dots', 'wave', 'horizon', 'meter', 'tide', 'halftone']
 
 export const isStyle = (value: unknown): value is Style =>
   typeof value === 'string' && (STYLES as readonly string[]).includes(value)
@@ -23,6 +24,9 @@ const HBLK = [' ', '▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'] as co
 const RIPPLE = ['━', '─', '╌', '┈'] as const
 const PULSE_RATIO = [200, 600, 1000, 600, 200] as const
 const RIPPLE_RATIO = [1000, 750, 500, 250] as const
+const HORIZON_FADE = ['┈', '╌', '─'] as const
+const PARTIAL = ['', '▏', '▎', '▍', '▌', '▋', '▊', '▉'] as const
+const HALFTONE = [' ', '·', '∙', '•', '●'] as const
 
 // [row, column factor]: the column is -1000..1000 from the centre, scaled to the box
 const DOTS: readonly (readonly [number, number])[] = [
@@ -118,11 +122,66 @@ function wave(grid: Grid, half: number): void {
   }
 }
 
+function horizon(grid: Grid, half: number): void {
+  if (half <= 0) {
+    centred(grid, MID, '·')
+    return
+  }
+  const n = half * 2
+  centred(grid, MID, Array.from({ length: n }, (_, i) => HORIZON_FADE[Math.min(i, n - 1 - i)] ?? '━').join(''))
+}
+
+/** A capsule that fills left to right in eighths of a cell. */
+function meter(grid: Grid, progress: number, width: number): void {
+  const inner = boxWidth(width) - 2
+  const fill = (inner * progress) / 1000
+  const full = Math.floor(fill)
+  const bar = ('█'.repeat(full) + PARTIAL[Math.floor((fill - full) * 8)]).padEnd(inner)
+  centred(grid, MID - 1, '▁'.repeat(inner))
+  centred(grid, MID, '▕' + bar + '▏')
+  centred(grid, MID + 1, '▔'.repeat(inner))
+}
+
+/** Water that rises with the breath; its surface calms as it rises and is a flat brim when full. */
+function tide(grid: Grid, progress: number, width: number, elapsedMs: number): void {
+  const span = boxWidth(width)
+  const left = Math.floor((width - span) / 2)
+  const k = progress / 1000
+  const swell = 2.4 * Math.sqrt(1 - k)
+  for (let c = 0; c < span; c++) {
+    const col = left + c
+    if (col < 0 || col >= width) continue
+    const ripple = (Math.sin(c * 0.3 + elapsedMs / 900) + 0.4 * Math.sin(c * 0.11 - elapsedMs / 1700)) / 1.4
+    // in eighths of a row: a shallow layer at rest, all 7 rows (56) at the top of the breath
+    const level = 5 + k * 51 + swell * ripple
+    grid.forEach((line, row) => {
+      const eighths = Math.round(Math.max(0, Math.min(8, level - (ART_ROWS - 1 - row) * 8)))
+      if (eighths > 0) line[col] = HBLK[eighths]!
+    })
+  }
+}
+
+/** A staggered grid of dots that swell from the centre, like a print halftone. */
+function halftone(grid: Grid, progress: number, width: number): void {
+  const centreCol = (width - 1) / 2
+  const reach = 0.6 + (13 * progress) / 1000
+  const half = boxWidth(width) / 2
+  grid.forEach((line, row) => {
+    for (let col = Math.max(0, Math.ceil(centreCol - half)); col <= Math.min(width - 1, centreCol + half); col++) {
+      if ((Math.round(col - centreCol) + row) % 2) continue
+      // a cell is about twice as tall as it is wide, so a column counts 0.47 of a row
+      const dot = Math.min(4, Math.ceil(((reach - Math.hypot((col - centreCol) * 0.47, row - MID)) / 2.4) * 4))
+      if (dot > 0) line[col] = HALFTONE[dot]!
+    }
+  })
+}
+
 /**
  * One frame: `rows` strings, each at most `width` cells with the shape centred.
  * Fewer than 7 rows shows the middle of the picture; more pads it top and bottom.
+ * `elapsedMs` (time since the band mounted) moves the tide's surface; the other styles ignore it.
  */
-export function frame(style: Style, progress: number, width: number, rows: number = ART_ROWS): string[] {
+export function frame(style: Style, progress: number, width: number, rows: number = ART_ROWS, elapsedMs: number = 0): string[] {
   const grid = blank(Math.max(1, width))
   const half = scaledHalf(progress, width)
   switch (style) {
@@ -130,6 +189,10 @@ export function frame(style: Style, progress: number, width: number, rows: numbe
     case 'ripples': ripples(grid, half); break
     case 'dots': dots(grid, progress, width); break
     case 'wave': wave(grid, half); break
+    case 'horizon': horizon(grid, half); break
+    case 'meter': meter(grid, progress, width); break
+    case 'tide': tide(grid, progress, width, elapsedMs); break
+    case 'halftone': halftone(grid, progress, width); break
   }
   const lines = grid.map(line => line.join('').trimEnd() || ' ')
   if (rows >= ART_ROWS) {

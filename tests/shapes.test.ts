@@ -16,11 +16,13 @@ describe('shapes', () => {
     expect(scaledHalf(1000, 80)).toBe(30)
   })
 
-  test.each(STYLES)('%s: empty at 0, within the box at 1000, rows as asked', style => {
+  test.each(['pulse', 'ripples', 'dots', 'wave'] as const)('%s: empty at the bottom of the breath', style => {
     const empty = frame(style, 0, 80)
     expect(empty).toHaveLength(ART_ROWS)
     expect(empty.every(line => line.trim() === '')).toBe(true)
+  })
 
+  test.each(STYLES)('%s: within the box at 1000, rows as asked', style => {
     const full = frame(style, 1000, 80)
     expect(full).toHaveLength(ART_ROWS)
     expect(full.some(line => line.trim() !== '')).toBe(true)
@@ -64,6 +66,42 @@ describe('shapes', () => {
     expect(f[3]!.trim().length).toBeLessThan(f[5]!.trim().length)
   })
 
+  test('horizon: a dot at rest, one line that grows to the box', () => {
+    expect(frame('horizon', 0, 80)[3]!.trim()).toBe('·')
+    const half = frame('horizon', 500, 80)[3]!.trim()
+    const full = frame('horizon', 1000, 80)[3]!.trim()
+    expect(width(half)).toBeLessThan(width(full))
+    expect(width(full)).toBe(60)
+    expect(frame('horizon', 1000, 80).filter(line => line.trim()).length).toBe(1)
+  })
+
+  test('meter: an empty capsule at rest that fills from the left', () => {
+    const bar = (p: number) => frame('meter', p, 80)[3]!.trim()
+    expect(bar(0)).toMatch(/^▕ +▏$/)
+    expect(bar(1000)).toBe('▕' + '█'.repeat(58) + '▏')
+    expect(bar(500).startsWith('▕█')).toBe(true)
+    expect(bar(500).endsWith(' ▏')).toBe(true)
+  })
+
+  test('tide: rises with the breath and is a full, flat container at the top', () => {
+    const filled = (f: string[]) => f.join('').split('').filter(ch => ch !== ' ').length
+    expect(filled(frame('tide', 600, 80, ART_ROWS, 0))).toBeGreaterThan(filled(frame('tide', 200, 80, ART_ROWS, 0)))
+    const full = frame('tide', 1000, 80, ART_ROWS, 12345)
+    expect(full.every(line => line.trim() === '█'.repeat(60))).toBe(true)
+  })
+
+  test('tide: the surface moves with time below the top', () => {
+    expect(frame('tide', 500, 80, ART_ROWS, 0)).not.toEqual(frame('tide', 500, 80, ART_ROWS, 1500))
+  })
+
+  test('halftone: one dot at rest, the dots swell outwards', () => {
+    expect(frame('halftone', 0, 80).join('').trim()).toBe('·')
+    const count = (p: number) => frame('halftone', p, 80).join('').split('').filter(ch => ch !== ' ').length
+    expect(count(500)).toBeGreaterThan(count(100))
+    expect(count(1000)).toBeGreaterThan(count(500))
+    expect(frame('halftone', 1000, 80)[3]).toContain('●')
+  })
+
   test('fewer rows show the middle of the picture; more pad it', () => {
     const three = frame('pulse', 1000, 80, 3)
     expect(three).toHaveLength(3)
@@ -84,7 +122,7 @@ describe('shapes', () => {
     const seen = new Set<string>()
     for (let i = 0; i < 40; i++) seen.add(pickStyle('random', 'pulse', Math.random))
     expect(seen.has('pulse')).toBe(false)
-    expect(seen.size).toBe(3)
+    expect(seen.size).toBe(STYLES.length - 1)
     expect(pickStyle('wave', 'wave')).toBe('wave')
   })
 
