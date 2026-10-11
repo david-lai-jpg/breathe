@@ -77,6 +77,8 @@ bun test
 
 For type checking, run `/plugin-types` in that session, then `bunx -p typescript tsc -p .`.
 
+`bun test` covers only the pure functions. To check the real band, run `claude --plugin-dir .` in tmux from a trusted scratch folder, send a prompt with `tmux send-keys -l '<prompt>'` and then `tmux send-keys C-m`, wait for the spinner, and read the band with `tmux capture-pane -p`. If you change your Claude Code settings for the test, restore them afterwards.
+
 The original bash and tmux version lives in [`legacy/`](legacy/).
 
 ## License
